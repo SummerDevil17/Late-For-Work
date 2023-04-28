@@ -47,10 +47,10 @@ public class GameSessionManager : MonoBehaviour
     {
         contractGoalAmount = LevelUnlockManager.instance.GetPlayerCurrentGoal();
 
-        goalDisplay.text = string.Format("{0}/{1}", trashCompacted, contractGoalAmount);
-        goalSlider.value = 0;
-        currencyDisplay.text = currentCurrencyAmount.ToString();
-        batteryDisplay.text = currentBatteriesAmount.ToString();
+        //goalDisplay.text = string.Format("{0}/{1}", trashCompacted, contractGoalAmount);
+        //goalSlider.value = 0;
+        //currencyDisplay.text = currentCurrencyAmount.ToString();
+        //batteryDisplay.text = currentBatteriesAmount.ToString();
 
         PickCameraForConveyerAmount();
     }

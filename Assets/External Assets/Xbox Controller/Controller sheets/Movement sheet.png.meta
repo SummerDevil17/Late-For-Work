@@ -165,169 +165,169 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: D-pad Idle
+      name: D-PAD Idle
       rect:
         serializedVersion: 2
-        x: 0
-        y: 128
-        width: 128
-        height: 128
+        x: 30
+        y: 157
+        width: 68
+        height: 68
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 02305410000000000800000000000000
-      internalID: 21300000
+      spriteID: 8143767082bfe6a4aa3c63da26847f58
+      internalID: 1987600976
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: D-pad Right
+      name: D-PAD Right
       rect:
         serializedVersion: 2
-        x: 128
-        y: 128
-        width: 128
-        height: 128
+        x: 158
+        y: 157
+        width: 68
+        height: 68
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 22305410000000000800000000000000
-      internalID: 21300002
+      spriteID: 9c44cf4bd2009674a9eaab348ee253b0
+      internalID: -1788381614
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: D-pad Left
+      name: D-PAD Left
       rect:
         serializedVersion: 2
-        x: 256
-        y: 128
-        width: 128
-        height: 128
+        x: 286
+        y: 157
+        width: 68
+        height: 68
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 42305410000000000800000000000000
-      internalID: 21300004
+      spriteID: 9f229276adb3c72439576ce8e7445f90
+      internalID: 2056164894
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: D-pad Up
+      name: D-PAD Up
       rect:
         serializedVersion: 2
-        x: 384
-        y: 128
-        width: 128
-        height: 128
+        x: 414
+        y: 157
+        width: 68
+        height: 68
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 62305410000000000800000000000000
-      internalID: 21300006
+      spriteID: ad6b57d4be68648469fa9e325b49d070
+      internalID: -1288057822
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: D-pad Down
+      name: D-PAD Down
       rect:
         serializedVersion: 2
-        x: 512
-        y: 128
-        width: 128
-        height: 128
+        x: 542
+        y: 157
+        width: 68
+        height: 68
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 82305410000000000800000000000000
-      internalID: 21300008
+      spriteID: ad848655ff900a649bccc5db82b69c03
+      internalID: -869980328
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Thumbstick Bottom part
+      name: Thumbstick Base
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 128
-        height: 128
+        x: 25
+        y: 26
+        width: 78
+        height: 77
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: a2305410000000000800000000000000
-      internalID: 21300010
+      spriteID: 6e0e2ffd9aa01764f87310ad4f2a5cfd
+      internalID: -1936789584
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Thumbstick mid part
+      name: Thumbstick Mid
       rect:
         serializedVersion: 2
-        x: 128
-        y: 0
-        width: 128
-        height: 128
+        x: 152
+        y: 26
+        width: 78
+        height: 77
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: c2305410000000000800000000000000
-      internalID: 21300012
+      spriteID: c3124bc2d241e804080e2c986d377bc3
+      internalID: -685841761
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Thumbstick wheel
+      name: Thumbstick Top
       rect:
         serializedVersion: 2
-        x: 256
-        y: 0
-        width: 128
-        height: 128
+        x: 281
+        y: 26
+        width: 78
+        height: 77
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: e2305410000000000800000000000000
-      internalID: 21300014
+      spriteID: 42c1729fd63ec7c409d115eadb3ef4b2
+      internalID: -961773620
       vertices: []
       indices: 
       edges: []
@@ -335,7 +335,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: c1c3f80b93c86a542a7f52acf0a79cd3
     internalID: 0
     vertices: []
     indices: 
@@ -343,14 +343,18 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      D-pad Down: 21300008
-      D-pad Idle: 21300000
-      D-pad Left: 21300004
-      D-pad Right: 21300002
-      D-pad Up: 21300006
-      Thumbstick Bottom part: 21300010
-      Thumbstick mid part: 21300012
-      Thumbstick wheel: 21300014
+      D-PAD Down: -869980328
+      D-PAD Idle: 1987600976
+      D-PAD Left: 2056164894
+      D-PAD Right: -1788381614
+      D-PAD Up: -1288057822
+      Movement sheet_11: -1557463880
+      Movement sheet_5: 1659001566
+      Movement sheet_6: 1218350613
+      Movement sheet_8: -478293692
+      Thumbstick Base: -1936789584
+      Thumbstick Mid: -685841761
+      Thumbstick Top: -961773620
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
