@@ -38,7 +38,8 @@ public class CreditsMenu : MonoBehaviour, ICanvasDisplayer
         Time.timeScale = timeScale;
         foreach (GameObject ui in otherUIToDisable)
         {
-            ui.SetActive(state);
+            if (ui.activeSelf == !state)
+                ui.SetActive(state);
         }
     }
 

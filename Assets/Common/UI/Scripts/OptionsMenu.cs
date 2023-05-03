@@ -12,7 +12,6 @@ public class OptionsMenu : MonoBehaviour, ICanvasDisplayer
     public GameObject UiToControl { get => uiToControl; }
     public GameObject[] OtherUIToDisable { get => otherUIToDisable; }
 
-
     void Start()
     {
         uiToControl.SetActive(false);
@@ -39,7 +38,7 @@ public class OptionsMenu : MonoBehaviour, ICanvasDisplayer
 
         if (uiToControl.activeSelf != lastState)
         {
-            SwitchUIS(true, 1);
+            SwitchUIS(true, 0);
             SaveSettings();
         }
         lastState = false;
@@ -50,7 +49,8 @@ public class OptionsMenu : MonoBehaviour, ICanvasDisplayer
         Time.timeScale = timeScale;
         foreach (GameObject ui in otherUIToDisable)
         {
-            ui.SetActive(state);
+            if (ui.activeSelf == !state)
+                ui.SetActive(state);
         }
     }
 

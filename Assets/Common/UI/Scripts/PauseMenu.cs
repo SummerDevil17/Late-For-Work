@@ -45,7 +45,8 @@ public class PauseMenu : MonoBehaviour, ICanvasDisplayer
         Time.timeScale = timeScale;
         foreach (GameObject ui in otherUIToDisable)
         {
-            ui.SetActive(state);
+            if (ui.activeSelf == !state)
+                ui.SetActive(state);
         }
     }
 
@@ -61,12 +62,12 @@ public class PauseMenu : MonoBehaviour, ICanvasDisplayer
 
     public void Quit()
     {
-        if (!GameSessionManager.instance || !GameSessionManager.instance.HasReachedGoal)
-            Application.Quit();
-        else if (winScreenBeforeQuit)
+        if (winScreenBeforeQuit)
         {
             ToggleUI(false);
             winScreenBeforeQuit.TriggerMenu(true);
         }
+        else
+            Application.Quit();
     }
 }

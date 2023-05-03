@@ -38,7 +38,6 @@ public class WinScreen : MonoBehaviour, ICanvasDisplayer
 
             if (Input.anyKeyDown && !isTringToQuit)
             {
-                GameSessionManager.instance.HasReachedGoal = false;
                 Fader.instance.FadeToMainMenu();
             }
             else if (Input.anyKeyDown && isTringToQuit) Application.Quit();
@@ -66,8 +65,8 @@ public class WinScreen : MonoBehaviour, ICanvasDisplayer
 
         uiToControl.SetActive(!uiToControl.activeSelf);
 
-        finalScoreDisplay.text = string.Format("{0}/{1}", GameSessionManager.instance.TrashCompacted.ToString(),
-        GameSessionManager.instance.ContractGoalAmount.ToString());
+        finalScoreDisplay.text = string.Format("{0}\n{1}", GameSessionManager.instance.ScorePoints.ToString(),
+                GameSessionManager.instance.CalculateTime());
         if (GameSessionManager.instance.HasUnlockedEveryLevel)
             winTextDisplay.text = winTextWithEveryLevel;
 
@@ -79,7 +78,8 @@ public class WinScreen : MonoBehaviour, ICanvasDisplayer
         Time.timeScale = timeScale;
         foreach (GameObject ui in otherUIToDisable)
         {
-            ui.SetActive(state);
+            if (ui.activeSelf == !state)
+                ui.SetActive(state);
         }
     }
 

@@ -53,7 +53,8 @@ public class IntroductionMenu : MonoBehaviour, ICanvasDisplayer
         Time.timeScale = timeScale;
         foreach (GameObject ui in otherUIToDisable)
         {
-            ui.SetActive(flag);
+            if (ui.activeSelf == !flag)
+                ui.SetActive(flag);
         }
     }
 

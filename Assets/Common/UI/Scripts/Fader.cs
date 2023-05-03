@@ -41,11 +41,10 @@ public class Fader : MonoBehaviour
     }
     public void FadeToMainMenu()
     {
-        //if doesn't exist or if exists but has not reached goal
-        if (!GameSessionManager.instance || !GameSessionManager.instance.HasReachedGoal)
-            fadingAnimator.SetTrigger("fadeToMain");
-        else if (winScreen)
+        if (winScreen)
             winScreen.TriggerMenu(false);
+        else
+            fadingAnimator.SetTrigger("fadeToMain");
     }
 
     public void FadeToBlackImmediately()
