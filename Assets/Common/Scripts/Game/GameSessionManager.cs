@@ -11,6 +11,10 @@ public class GameSessionManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI scoreDisplay;
     [SerializeField] TextMeshProUGUI timeElapsedDisplay;
 
+    [Header("Pick-Up Button References")]
+    [SerializeField] Button weaponButton;
+    [SerializeField] Button healingButton;
+    [SerializeField] Button throwButton;
 
     [Header("End Screens References")]
     [SerializeField] WinMenu winScreen;
@@ -62,4 +66,22 @@ public class GameSessionManager : MonoBehaviour
     }
 
     public void LoseGame() { lossScreen.TriggerMenu(); }
+
+    public void EnableButton(GameObject caller)
+    {
+        if (caller.TryGetComponent<WeaponPickUp>(out WeaponPickUp weapon)) { weaponButton.gameObject.SetActive(true); }
+        else if (caller.TryGetComponent<HealthPickUp>(out HealthPickUp healing)) { healingButton.gameObject.SetActive(true); }
+        else if (caller.TryGetComponent<PlayerController>(out PlayerController player))
+        { throwButton.gameObject.SetActive(true); }
+    }
+
+    public void DisableButton(GameObject caller)
+    {
+        if (weaponButton.gameObject.activeSelf == true && caller.TryGetComponent<WeaponPickUp>(out WeaponPickUp weapon))
+        { weaponButton.gameObject.SetActive(false); }
+        else if (healingButton.gameObject.activeSelf == true && caller.TryGetComponent<HealthPickUp>(out HealthPickUp healing))
+        { healingButton.gameObject.SetActive(false); }
+        else if (throwButton.gameObject.activeSelf == true && caller.TryGetComponent<PlayerController>(out PlayerController player))
+        { throwButton.gameObject.SetActive(false); }
+    }
 }

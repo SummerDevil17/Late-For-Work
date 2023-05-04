@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.EnhancedTouch;
@@ -17,6 +18,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float highestYValueInLevel = 1.5f;
     [SerializeField] float lowestYValueInLevel = -7.5f;
 
+    [Header("Player Animation Speed Values")]
+    [SerializeField] float pickUpAnimationHold = 0.35f;
+
     [Header("Player Stats Values")]
     [SerializeField] float maxHealth = 100f;
     [SerializeField] float punchDamage = 10f;
@@ -31,6 +35,7 @@ public class PlayerController : MonoBehaviour
     //Player Variable Setup
     private Animator playerAnimator;
     private Rigidbody2D playerRB2D;
+    private SpriteRenderer playerSprite;
     private float currentHealth, invincibilityTimer;
 
     //Player Movement private values
@@ -44,13 +49,24 @@ public class PlayerController : MonoBehaviour
 
     //Player States Bool Checks
     private bool isDead = false, isInvincible = false;
-    private bool isJumping = false, isGrounded = true, isFacingRight = true;
-    private bool isInCombatArea = false;
+    private bool isJumping = false, isGrounded = true, isFacingRight = true, isAnimating = false;
+    private bool isInCombatArea = false, isHoldingObject = false, canHeal = false;
+
+    //Player Interaction With Objects
+    private GameObject objectToPickUp = null;
+
+    private CinemachineFramingTransposer followTransposer;
+
+    public bool CanHeal { get => canHeal; }
+    public bool IsHoldingObject { get => isHoldingObject; set => isHoldingObject = value; }
+    public bool IsFacingRight { get => isFacingRight; }
 
     void Start()
     {
         playerAnimator = GetComponent<Animator>();
         playerRB2D = GetComponent<Rigidbody2D>();
+        playerSprite = GetComponent<SpriteRenderer>();
+        followTransposer = playerFollowCam.GetCinemachineComponent(CinemachineCore.Stage.Body) as CinemachineFramingTransposer;
 
         currentHealth = maxHealth;
     }
@@ -73,7 +89,9 @@ public class PlayerController : MonoBehaviour
         }
         else if (!isGrounded && playerRB2D.position.y <= startingJumpY + 0.08f)
         {
-            isGrounded = true; playerRB2D.gravityScale = 0f;
+            isGrounded = true;
+            playerRB2D.gravityScale = 0f;
+            playerRB2D.velocity = Vector2.zero;
 
             if (playerRB2D.position.y <= lowestYValueInLevel)
                 playerRB2D.position += Vector2.up * 0.25f;
@@ -86,6 +104,8 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (isAnimating) return;
+
         float forceInY = currentInputVector2.y;
 
         if (isJumping)
@@ -119,11 +139,35 @@ public class PlayerController : MonoBehaviour
     {
         if (isDead || !isGrounded) return;
 
+        if (isHoldingObject)
+        {
+            objectToPickUp.GetComponent<WeaponPickUp>().Drop(this);
+            isHoldingObject = false;
+            playerAnimator.SetBool("isHolding", false);
+
+            GameSessionManager.instance.DisableButton(this.gameObject);
+        }
+
         isJumping = true;
         isGrounded = false;
         jumpingTimer = 0f;
 
-        startingJumpY = transform.position.y;
+        startingJumpY = playerRB2D.position.y;
+    }
+
+    public void OnPickUp() { if (isDead) return; StartCoroutine(PickUp()); }
+
+    public void OnThrow()
+    {
+        if (isDead) return;
+
+        if (isHoldingObject)
+        {
+            playerAnimator.SetTrigger("throw");
+            objectToPickUp.GetComponent<WeaponPickUp>().Throw(this);
+
+            GameSessionManager.instance.DisableButton(this.gameObject);
+        }
     }
 
     public void ChangeHealth(int amount)
@@ -134,16 +178,31 @@ public class PlayerController : MonoBehaviour
 
             isInvincible = true;
             invincibilityTimer = timeInvincible;
+
+            playerAnimator.SetTrigger("hit");
+
+            if (isHoldingObject)
+            {
+                objectToPickUp.GetComponent<WeaponPickUp>().Drop(this);
+                isHoldingObject = false;
+                playerAnimator.SetBool("isHolding", false);
+
+                GameSessionManager.instance.DisableButton(this.gameObject);
+            }
         }
 
         currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
-        GameSessionManager.instance.UpdateHealthBar(currentHealth);
+        GameSessionManager.instance.UpdateHealthBar(currentHealth / maxHealth);
 
         if (currentHealth <= 0)
         {
             isDead = true;
+            playerAnimator.SetTrigger("die");
+            currentInputVector2 = Vector2.zero;
             GameSessionManager.instance.LoseGame();
         }
+        else if (currentHealth < maxHealth) { canHeal = true; }
+        else if (currentHealth == maxHealth) { canHeal = false; }
     }
 
     public void LockInCombatArea(float lowestX, float highestX)
@@ -152,20 +211,72 @@ public class PlayerController : MonoBehaviour
         highestXValueInLevel = highestX;
 
         isInCombatArea = true;
-        playerFollowCam.Follow = null;
+
+        followTransposer.m_DeadZoneWidth = 1f;
+        followTransposer.m_SoftZoneWidth = 2f;
     }
 
     public void FinishCombatArea()
     {
         isInCombatArea = false;
-        playerFollowCam.Follow = this.transform;
+
+        followTransposer.m_DeadZoneWidth = 0f;
+        followTransposer.m_SoftZoneWidth = 0.3f;
     }
+
+    public void SetUpObjectToInteract(GameObject objectSent) { objectToPickUp = objectSent; }
+
+    #region Animation Event Calls
+    public void ResetJumpLayer() { playerAnimator.SetLayerWeight(1, 0f); }
+    public void TriggerAnimating() { isAnimating = true; }
+    public void CancelAnimating() { isAnimating = false; }
+    public void StopHoldingObject() { isHoldingObject = false; }
+
+    #endregion
 
     private void AnimatePlayer()
     {
+        if (isJumping)
+        {
+            playerAnimator.SetTrigger("jump");
+            playerAnimator.SetLayerWeight(1, 1f);
+        }
+        else if (!isJumping) playerAnimator.SetTrigger("land");
 
+        if (!isHoldingObject) playerAnimator.SetBool("isHolding", false);
+
+        if (currentInputVector2.x > 0f) isFacingRight = true;
+        else if (currentInputVector2.x < 0f) isFacingRight = false;
+
+        if (isFacingRight && playerSprite.flipX) { playerSprite.flipX = false; }
+        else if (!isFacingRight && !playerSprite.flipX) { playerSprite.flipX = true; }
+
+        playerAnimator.SetFloat("movementInput", currentInputVector2.magnitude);
     }
 
+    private IEnumerator PickUp()
+    {
+        if (isHoldingObject) yield return null;
+
+        playerAnimator.SetTrigger("pickUp");
+        isAnimating = true;
+
+        yield return new WaitForSeconds(pickUpAnimationHold);
+
+        isAnimating = false;
+        if (objectToPickUp && objectToPickUp.TryGetComponent<IPickUp>(out IPickUp pickUp))
+        {
+            pickUp.PickUp(this.transform);
+
+            if (objectToPickUp && objectToPickUp.TryGetComponent<WeaponPickUp>(out WeaponPickUp weapon))
+            {
+                isHoldingObject = true;
+                playerAnimator.SetBool("isHolding", true);
+
+                GameSessionManager.instance.EnableButton(this.gameObject);
+            }
+        }
+    }
 
     #region Handle Touch Input With the Input System
     private void HandleFingerDown(Finger fingerUsed)
