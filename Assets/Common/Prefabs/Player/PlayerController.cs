@@ -91,6 +91,7 @@ public class PlayerController : MonoBehaviour
         {
             isGrounded = true;
             playerRB2D.gravityScale = 0f;
+            playerRB2D.velocity = Vector2.zero;
 
             if (playerRB2D.position.y <= lowestYValueInLevel)
                 playerRB2D.position += Vector2.up * 0.25f;
@@ -151,7 +152,7 @@ public class PlayerController : MonoBehaviour
         isGrounded = false;
         jumpingTimer = 0f;
 
-        startingJumpY = transform.position.y;
+        startingJumpY = playerRB2D.position.y;
     }
 
     public void OnPickUp() { if (isDead) return; StartCoroutine(PickUp()); }
@@ -226,6 +227,7 @@ public class PlayerController : MonoBehaviour
     public void SetUpObjectToInteract(GameObject objectSent) { objectToPickUp = objectSent; }
 
     #region Animation Event Calls
+    public void ResetJumpLayer() { playerAnimator.SetLayerWeight(1, 0f); }
     public void TriggerAnimating() { isAnimating = true; }
     public void CancelAnimating() { isAnimating = false; }
     public void StopHoldingObject() { isHoldingObject = false; }
@@ -240,11 +242,6 @@ public class PlayerController : MonoBehaviour
             playerAnimator.SetLayerWeight(1, 1f);
         }
         else if (!isJumping) playerAnimator.SetTrigger("land");
-
-        if (isGrounded)
-        {
-            //playerAnimator.SetLayerWeight(1, 0f);
-        }
 
         if (!isHoldingObject) playerAnimator.SetBool("isHolding", false);
 
