@@ -1,8 +1,6 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.EnhancedTouch;
-using ETouch = UnityEngine.InputSystem.EnhancedTouch;
 using Cinemachine;
 
 public class PlayerController : MonoBehaviour
@@ -44,9 +42,6 @@ public class PlayerController : MonoBehaviour
     private float startingJumpY;
     private float lowestXValueInLevel, highestXValueInLevel;
 
-    //Player Touch private variables
-    private Finger movementFinger;
-
     //Player States Bool Checks
     private bool isDead = false, isInvincible = false;
     private bool isJumping = false, isGrounded = true, isFacingRight = true, isAnimating = false;
@@ -85,11 +80,15 @@ public class PlayerController : MonoBehaviour
         if (isJumping)
         {
             jumpingTimer += Time.deltaTime;
-            if (jumpingTimer >= timeToKeepJumping) { isJumping = false; playerRB2D.gravityScale = gravityScale; }
+            if (jumpingTimer >= timeToKeepJumping)
+            {
+                isJumping = false;
+                playerRB2D.gravityScale = gravityScale;
+                playerAnimator.SetTrigger("land");
+            }
         }
         else if (!isGrounded && playerRB2D.position.y <= startingJumpY + 0.08f)
         {
-            isGrounded = true;
             playerRB2D.gravityScale = 0f;
             playerRB2D.velocity = Vector2.zero;
 
@@ -141,7 +140,7 @@ public class PlayerController : MonoBehaviour
 
         if (isHoldingObject)
         {
-            objectToPickUp.GetComponent<WeaponPickUp>().Drop(this);
+            objectToPickUp.GetComponent<WeaponPickUp>().Drop();
             isHoldingObject = false;
             playerAnimator.SetBool("isHolding", false);
 
@@ -151,6 +150,10 @@ public class PlayerController : MonoBehaviour
         isJumping = true;
         isGrounded = false;
         jumpingTimer = 0f;
+
+        playerAnimator.SetTrigger("jump");
+        playerAnimator.SetBool("isGrounded", false);
+        playerAnimator.SetLayerWeight(1, 1f);
 
         startingJumpY = playerRB2D.position.y;
     }
@@ -164,10 +167,23 @@ public class PlayerController : MonoBehaviour
         if (isHoldingObject)
         {
             playerAnimator.SetTrigger("throw");
-            objectToPickUp.GetComponent<WeaponPickUp>().Throw(this);
+            objectToPickUp.GetComponent<WeaponPickUp>().Throw();
 
             GameSessionManager.instance.DisableButton(this.gameObject);
         }
+    }
+
+    public void OnPunch()
+    {
+        if (isDead || isAnimating) return;
+        if (!isGrounded) playerAnimator.SetTrigger("jumpAttack");
+        else playerAnimator.SetTrigger("punch");
+    }
+    public void OnKick()
+    {
+        if (isDead || isAnimating) return;
+        if (!isGrounded) playerAnimator.SetTrigger("jumpAttack");
+        else playerAnimator.SetTrigger("kick");
     }
 
     public void ChangeHealth(int amount)
@@ -183,7 +199,7 @@ public class PlayerController : MonoBehaviour
 
             if (isHoldingObject)
             {
-                objectToPickUp.GetComponent<WeaponPickUp>().Drop(this);
+                objectToPickUp.GetComponent<WeaponPickUp>().Drop();
                 isHoldingObject = false;
                 playerAnimator.SetBool("isHolding", false);
 
@@ -227,7 +243,7 @@ public class PlayerController : MonoBehaviour
     public void SetUpObjectToInteract(GameObject objectSent) { objectToPickUp = objectSent; }
 
     #region Animation Event Calls
-    public void ResetJumpLayer() { playerAnimator.SetLayerWeight(1, 0f); }
+    public void ResetJumpLayer() { playerAnimator.SetLayerWeight(1, 0f); isGrounded = true; }
     public void TriggerAnimating() { isAnimating = true; }
     public void CancelAnimating() { isAnimating = false; }
     public void StopHoldingObject() { isHoldingObject = false; }
@@ -236,12 +252,7 @@ public class PlayerController : MonoBehaviour
 
     private void AnimatePlayer()
     {
-        if (isJumping)
-        {
-            playerAnimator.SetTrigger("jump");
-            playerAnimator.SetLayerWeight(1, 1f);
-        }
-        else if (!isJumping) playerAnimator.SetTrigger("land");
+        if (isGrounded) playerAnimator.SetBool("isGrounded", true);
 
         if (!isHoldingObject) playerAnimator.SetBool("isHolding", false);
 
@@ -277,38 +288,4 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-
-    #region Handle Touch Input With the Input System
-    private void HandleFingerDown(Finger fingerUsed)
-    {
-        if (movementFinger == null) return;
-    }
-
-    private void HandleFingerMove(Finger fingerDragged)
-    {
-
-    }
-
-    private void HandleFingerUp(Finger fingerLift)
-    {
-
-    }
-
-    void OnEnable()
-    {
-        EnhancedTouchSupport.Enable();
-        ETouch.Touch.onFingerDown += HandleFingerDown;
-        ETouch.Touch.onFingerMove += HandleFingerMove;
-        ETouch.Touch.onFingerUp += HandleFingerUp;
-    }
-
-    void OnDisable()
-    {
-        EnhancedTouchSupport.Disable();
-        ETouch.Touch.onFingerDown -= HandleFingerDown;
-        ETouch.Touch.onFingerMove -= HandleFingerMove;
-        ETouch.Touch.onFingerUp -= HandleFingerUp;
-    }
-
-    #endregion
 }
