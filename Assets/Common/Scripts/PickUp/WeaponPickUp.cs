@@ -3,9 +3,12 @@ using UnityEngine;
 public class WeaponPickUp : MonoBehaviour, IPickUp
 {
     [SerializeField] int weaponHealth = 3;
-    [SerializeField] float weaponThrowForce = 6f;
+    [SerializeField] int weaponDamage = 15;
+    [SerializeField] float weaponThrowForce = 100f;
+    [SerializeField] float weaponDropForce = 15f;
 
     private Rigidbody2D weaponRB2D;
+    private float playerFeetLocation;
     private bool hasBeenPickedUp = false;
     public Transform PickUpTransform { get => transform; }
 
@@ -13,6 +16,28 @@ public class WeaponPickUp : MonoBehaviour, IPickUp
     {
         weaponRB2D = GetComponent<Rigidbody2D>();
         weaponRB2D.gravityScale = 0f;
+    }
+
+    void Update()
+    {
+        if (hasBeenPickedUp) transform.position = transform.parent.position;
+    }
+
+    void FixedUpdate()
+    {
+        if (weaponRB2D.position.y <= playerFeetLocation + 0.1f)
+        {
+            weaponRB2D.gravityScale = 0f;
+            weaponRB2D.velocity = Vector2.zero;
+            weaponRB2D.MovePosition(weaponRB2D.position);
+
+            GetComponent<BoxCollider2D>().isTrigger = true;
+        }
+    }
+
+    void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.collider.TryGetComponent<PlayerController>(out PlayerController player)) { player.ChangeHealth(-weaponDamage); }
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -36,7 +61,8 @@ public class WeaponPickUp : MonoBehaviour, IPickUp
         if (other.TryGetComponent<PlayerController>(out PlayerController player))
         {
             GameSessionManager.instance.DisableButton(this.gameObject);
-            player.SetUpObjectToInteract(null);
+            if (!player.IsHoldingObject)
+                player.SetUpObjectToInteract(null);
         }
     }
 
@@ -48,13 +74,31 @@ public class WeaponPickUp : MonoBehaviour, IPickUp
         transform.parent = player.GetComponentsInChildren<Transform>()[1];
     }
 
-    public void Throw()
+    public void Throw(PlayerController player)
     {
         transform.parent = null;
+        playerFeetLocation = player.gameObject.transform.position.y;
 
         weaponRB2D.gravityScale = 1f;
-        weaponRB2D.AddForce(new Vector2(weaponThrowForce, 0f));
+        if (player.IsFacingRight)
+            weaponRB2D.AddForce(new Vector2(weaponThrowForce, 0f));
+        else
+            weaponRB2D.AddForce(new Vector2(-weaponThrowForce, 0f));
 
+        GetComponent<BoxCollider2D>().isTrigger = false;
+        hasBeenPickedUp = false;
+    }
+
+    public void Drop(PlayerController player)
+    {
+        transform.parent = null;
+        playerFeetLocation = player.gameObject.transform.position.y;
+
+        weaponRB2D.gravityScale = 1f;
+        if (player.IsFacingRight)
+            weaponRB2D.AddForce(new Vector2(weaponDropForce, 0f));
+        else
+            weaponRB2D.AddForce(new Vector2(-weaponDropForce, 0f));
         hasBeenPickedUp = false;
     }
 }

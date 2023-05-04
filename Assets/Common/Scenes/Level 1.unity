@@ -482,7 +482,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: -9095717837082945937, guid: 207ee8102dd4143d288186ef0be518ee, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 35beae13476330a4cac3dbff581b432b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -501,7 +501,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 257421297}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 4, z: 0}
+  m_LocalPosition: {x: 0, y: 3.31, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -522,8 +522,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 1, y: 2}
+  m_Offset: {x: 0, y: 2.08}
+  m_Size: {x: 1.1969422, y: 3.845087}
   m_Direction: 0
 --- !u!114 &257421302
 MonoBehaviour:
@@ -640,13 +640,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerFollowCam: {fileID: 792430148}
-  playerPickUpTransform: {fileID: 0}
   movementSpeed: 5
   jumpForce: 1050
   timeToKeepJumping: 0.2
   gravityScale: 50
   highestYValueInLevel: 7.5
   lowestYValueInLevel: 1
+  pickUpAnimationHold: 0.35
   maxHealth: 100
   punchDamage: 10
   kickDamage: 20
@@ -1242,7 +1242,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 0
   m_Sprite: {fileID: 1113896316, guid: 07ae5d063100d5d43a353e0d35402336, type: 3}
   m_Color: {r: 0.009264708, g: 1, b: 0, a: 1}
   m_FlipX: 0
@@ -1875,7 +1875,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.0000075545386, y: 6.86198, z: -10}
+  m_LocalPosition: {x: -0.0000075539574, y: 6.86198, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1964,7 +1964,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponHealth: 3
-  weaponThrowForce: 6
+  weaponDamage: 15
+  weaponThrowForce: 100
+  weaponDropForce: 15
 --- !u!212 &612362036
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2005,7 +2007,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 0
   m_Sprite: {fileID: -205817720, guid: 07ae5d063100d5d43a353e0d35402336, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -2055,15 +2057,15 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 0.1
   m_LinearDrag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -2202,7 +2204,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 792430146}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 6.5, z: -10}
+  m_LocalPosition: {x: 0, y: 5.81, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7682,7 +7684,7 @@ MonoBehaviour:
   timeElapsedDisplay: {fileID: 1845779815}
   weaponButton: {fileID: 1156998039}
   healingButton: {fileID: 1233954770}
-  throwButton: {fileID: 0}
+  throwButton: {fileID: 1026374878}
   winScreen: {fileID: 7409517283292417132}
   lossScreen: {fileID: 5785034627436278391}
 --- !u!1 &7409517283287252203

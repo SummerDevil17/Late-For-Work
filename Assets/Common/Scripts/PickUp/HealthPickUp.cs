@@ -12,7 +12,7 @@ public class HealthPickUp : MonoBehaviour, IPickUp
         {
             player.ChangeHealth(-10);
 
-            if (player.CanHeal)
+            if (player.CanHeal && !player.IsHoldingObject)
             {
                 GameSessionManager.instance.EnableButton(this.gameObject);
                 player.SetUpObjectToInteract(this.gameObject);
@@ -25,13 +25,16 @@ public class HealthPickUp : MonoBehaviour, IPickUp
         if (other.TryGetComponent<PlayerController>(out PlayerController player))
         {
             GameSessionManager.instance.DisableButton(this.gameObject);
-            player.SetUpObjectToInteract(null);
+            if (!player.IsHoldingObject)
+                player.SetUpObjectToInteract(null);
         }
     }
 
     public void PickUp(Transform player)
     {
-        player.GetComponent<PlayerController>().ChangeHealth(healthToRestore);
+        PlayerController playerController = player.GetComponent<PlayerController>();
+        playerController.ChangeHealth(healthToRestore);
+        playerController.IsHoldingObject = false;
 
         GameSessionManager.instance.DisableButton(this.gameObject);
         Destroy(this.gameObject);
