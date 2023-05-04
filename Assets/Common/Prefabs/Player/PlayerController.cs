@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.EnhancedTouch;
@@ -45,12 +46,21 @@ public class PlayerController : MonoBehaviour
     //Player States Bool Checks
     private bool isDead = false, isInvincible = false;
     private bool isJumping = false, isGrounded = true, isFacingRight = true;
-    private bool isInCombatArea = false;
+    private bool isInCombatArea = false, isHoldingObject = false, canHeal = false;
+
+    //Player Interaction With Objects
+    private GameObject objectToInteract = null;
+
+    private CinemachineFramingTransposer followTransposer;
+
+    public bool CanHeal { get => canHeal; }
+    public bool IsHoldingObject { get => isHoldingObject; }
 
     void Start()
     {
         playerAnimator = GetComponent<Animator>();
         playerRB2D = GetComponent<Rigidbody2D>();
+        followTransposer = playerFollowCam.GetCinemachineComponent(CinemachineCore.Stage.Body) as CinemachineFramingTransposer;
 
         currentHealth = maxHealth;
     }
@@ -81,12 +91,15 @@ public class PlayerController : MonoBehaviour
                 playerRB2D.position += -Vector2.up * 0.25f;
         }
 
-        AnimatePlayer();
+        AnimatePlayerMovement();
     }
 
     void FixedUpdate()
     {
         float forceInY = currentInputVector2.y;
+
+        if (currentInputVector2.x > 0f) isFacingRight = true;
+        else isFacingRight = false;
 
         if (isJumping)
         {
@@ -124,6 +137,22 @@ public class PlayerController : MonoBehaviour
         jumpingTimer = 0f;
 
         startingJumpY = transform.position.y;
+
+        playerAnimator.SetTrigger("jump");
+        playerAnimator.SetBool("isGrounded", false);
+    }
+
+    public void OnPickUp() { StartCoroutine(PickUp()); }
+
+    public void OnThrow()
+    {
+        if (isHoldingObject)
+        {
+            playerAnimator.SetTrigger("throw");
+            objectToInteract.GetComponent<WeaponPickUp>().Throw();
+
+            GameSessionManager.instance.DisableButton(this.gameObject);
+        }
     }
 
     public void ChangeHealth(int amount)
@@ -137,13 +166,15 @@ public class PlayerController : MonoBehaviour
         }
 
         currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
-        GameSessionManager.instance.UpdateHealthBar(currentHealth);
+        GameSessionManager.instance.UpdateHealthBar(currentHealth / maxHealth);
 
         if (currentHealth <= 0)
         {
             isDead = true;
             GameSessionManager.instance.LoseGame();
         }
+        else if (currentHealth < maxHealth) { canHeal = true; }
+        else if (currentHealth == maxHealth) { canHeal = false; }
     }
 
     public void LockInCombatArea(float lowestX, float highestX)
@@ -152,20 +183,40 @@ public class PlayerController : MonoBehaviour
         highestXValueInLevel = highestX;
 
         isInCombatArea = true;
-        playerFollowCam.Follow = null;
+
+        followTransposer.m_DeadZoneWidth = 1f;
+        followTransposer.m_SoftZoneWidth = 2f;
     }
 
     public void FinishCombatArea()
     {
         isInCombatArea = false;
-        playerFollowCam.Follow = this.transform;
+
+        followTransposer.m_DeadZoneWidth = 0f;
+        followTransposer.m_SoftZoneWidth = 0.3f;
     }
 
-    private void AnimatePlayer()
+    public void SetUpObjectToInteract(GameObject objectToPickUp) { }
+
+    private void AnimatePlayerMovement()
     {
-
+        if (isFacingRight) {; }
     }
 
+    private IEnumerator PickUp()
+    {
+        if (isHoldingObject) yield return null;
+
+        Debug.Log("PickUp");
+        playerAnimator.SetTrigger("pickUp");
+        yield return new WaitForSeconds(0.35f);
+
+        Debug.Log("Hello");
+        objectToInteract.GetComponent<IPickUp>().PickUp(this.transform);
+        isHoldingObject = true;
+
+        GameSessionManager.instance.EnableButton(this.gameObject);
+    }
 
     #region Handle Touch Input With the Input System
     private void HandleFingerDown(Finger fingerUsed)

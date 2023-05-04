@@ -18,7 +18,6 @@ public class CombatAreaTrigger : MonoBehaviour
             this.transform.position.x + cameraPositionBuffer - boxCollider2DWidthBuffer);
         }
 
-        StartCoroutine(WaitForDebug());
     }
 
     void OnDrawGizmos()
