@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3515140433461770273}
   - component: {fileID: 1519661592146901883}
   - component: {fileID: 1519661592146901887}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Small Health
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -150,6 +150,7 @@ MonoBehaviour:
   healthToRestore: 10
   triggerMaxLimit: 0.37
   triggerMinLimit: 0.41
+  healVFX: {fileID: 0}
 --- !u!1 &1519661593533669845
 GameObject:
   m_ObjectHideFlags: 0
@@ -161,7 +162,7 @@ GameObject:
   - component: {fileID: 1519661593533669846}
   - component: {fileID: 1519661593533669800}
   - component: {fileID: 1519661593533669847}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Hit SFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}

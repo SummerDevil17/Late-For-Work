@@ -34,6 +34,8 @@ public class WeaponPickUp : MonoBehaviour, IPickUp
     void Update()
     {
         if (weaponHealth <= 0) Destroy(this.gameObject);
+        if (hasBeenPickedUp) { transform.position = transform.parent.position; weaponSprite.sortingOrder++; }
+
         if (!player || player.IsHoldingObject || hasBeenPickedUp) return;
 
         if (IsWithingLimits())
@@ -44,15 +46,10 @@ public class WeaponPickUp : MonoBehaviour, IPickUp
         else
         {
             GameSessionManager.instance.DisableButton(this.gameObject);
-            if (!player.IsHoldingObject)
+            if (player && !player.IsHoldingObject)
             {
                 player.SetUpObjectToInteract(null);
             }
-        }
-
-        if (hasBeenPickedUp)
-        {
-            transform.position = transform.parent.position;
         }
     }
 
@@ -72,7 +69,7 @@ public class WeaponPickUp : MonoBehaviour, IPickUp
 
     void OnCollisionEnter2D(Collision2D other)
     {
-        Debug.Log(other.collider.name);
+        Debug.Log("Weapon collided with -> " + other.collider.name);
         if (other.collider.TryGetComponent<PlayerController>(out PlayerController player))
         {
             player.ChangeHealth(-weaponDamage);
@@ -110,7 +107,7 @@ public class WeaponPickUp : MonoBehaviour, IPickUp
         if (other.TryGetComponent<PlayerController>(out PlayerController isPlayer))
         {
             GameSessionManager.instance.DisableButton(this.gameObject);
-            if (!player.IsHoldingObject)
+            if (player && !player.IsHoldingObject)
                 player.SetUpObjectToInteract(null);
             player = null;
         }
@@ -138,6 +135,7 @@ public class WeaponPickUp : MonoBehaviour, IPickUp
 
         GetComponent<BoxCollider2D>().isTrigger = false;
         hasBeenPickedUp = false;
+        weaponSprite.sortingOrder--;
         player = null;
     }
 
@@ -152,6 +150,7 @@ public class WeaponPickUp : MonoBehaviour, IPickUp
         else
             weaponRB2D.AddForce(new Vector2(-weaponDropForce, 0f));
         hasBeenPickedUp = false;
+        weaponSprite.sortingOrder--;
         player = null;
     }
 

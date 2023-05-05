@@ -25,7 +25,7 @@ public class HealthPickUp : MonoBehaviour, IPickUp
         else
         {
             GameSessionManager.instance.DisableButton(this.gameObject);
-            if (!player.IsHoldingObject)
+            if (player && !player.IsHoldingObject)
             {
                 player.SetUpObjectToInteract(null);
             }
@@ -52,7 +52,7 @@ public class HealthPickUp : MonoBehaviour, IPickUp
         if (other.TryGetComponent<PlayerController>(out PlayerController isPlayer))
         {
             GameSessionManager.instance.DisableButton(this.gameObject);
-            if (!player.IsHoldingObject)
+            if (player && !player.IsHoldingObject)
             {
                 player.SetUpObjectToInteract(null);
             }

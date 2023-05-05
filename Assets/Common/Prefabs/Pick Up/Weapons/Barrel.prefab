@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7629904621626022321}
   - component: {fileID: 7629904621626022327}
   - component: {fileID: 7629904621626022326}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Hit SFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -160,7 +160,7 @@ GameObject:
   - component: {fileID: 7629904622663052607}
   - component: {fileID: 7629904622663052600}
   - component: {fileID: 7629904622663052605}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Barrel
   m_TagString: Untagged
   m_Icon: {fileID: 0}

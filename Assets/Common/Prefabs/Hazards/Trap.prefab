@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3038615564823676981}
   - component: {fileID: 3038615564823676980}
   - component: {fileID: 3038615564823676971}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Trap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -141,7 +141,7 @@ GameObject:
   - component: {fileID: 3038615565331167727}
   - component: {fileID: 3038615565331167725}
   - component: {fileID: 3038615565331167724}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Hit SFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}

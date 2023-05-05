@@ -58,10 +58,10 @@ public class EnemyController : MonoBehaviour
     {
         if (isDead || isAnimating) return;
 
-        enemyAnimator.SetTrigger("hit");
+        enemyAnimator.SetTrigger("hurt");
         hurtSFX.PlayClip();
 
-        currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
+        currentHealth = Mathf.Clamp(currentHealth - amount, 0, maxHealth);
 
         if (currentHealth <= 0)
         {

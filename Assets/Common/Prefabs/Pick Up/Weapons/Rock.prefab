@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1451578232160056527}
   - component: {fileID: 1451578232160056521}
   - component: {fileID: 1451578232160056526}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Hit SFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -160,7 +160,7 @@ GameObject:
   - component: {fileID: 1451578232843444802}
   - component: {fileID: 1451578232843444803}
   - component: {fileID: 1451578232843444800}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Rock
   m_TagString: Untagged
   m_Icon: {fileID: 0}

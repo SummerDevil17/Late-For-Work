@@ -314,6 +314,7 @@ public class PlayerController : MonoBehaviour
     private void TryToHitEnemy(int damage)
     {
         RaycastHit2D hit = CastForHit();
+        Debug.Log("Player attacked -> " + hit.collider.name);
 
         if (hit.collider.TryGetComponent<EnemyController>(out EnemyController enemy))
         {
@@ -340,5 +341,13 @@ public class PlayerController : MonoBehaviour
 
         Gizmos.color = Color.yellow;
         Gizmos.DrawLine(hitVFX.transform.position, hitVFX.transform.position + Vector3.left * 0.5f);
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(new Vector3(transform.position.x, highestYValueInLevel, transform.position.z), 0.5f);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(new Vector3(transform.position.x, lowestYValueInLevel, transform.position.z), 0.5f);
     }
 }
