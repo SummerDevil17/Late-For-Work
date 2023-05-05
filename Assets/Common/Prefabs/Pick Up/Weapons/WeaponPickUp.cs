@@ -11,6 +11,10 @@ public class WeaponPickUp : MonoBehaviour, IPickUp
     [SerializeField] float triggerMaxLimit = 1f;
     [SerializeField] float triggerMinLimit = 1f;
 
+    [Header("SFX/ VFX Setup")]
+    [SerializeField] AudioRandomizer hitSFX;
+    [SerializeField] GameObject hitVFX;
+
     private Rigidbody2D weaponRB2D;
     private SpriteRenderer weaponSprite;
     private Animator weaponAnimator;

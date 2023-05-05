@@ -21,22 +21,23 @@ public class PlayerController : MonoBehaviour
 
     [Header("Player Stats Values")]
     [SerializeField] float maxHealth = 100f;
-    [SerializeField] float punchDamage = 10f;
-    [SerializeField] float kickDamage = 20f;
+    [SerializeField] int punchDamage = 10;
+    [SerializeField] int kickDamage = 20;
+    [SerializeField] int jumpKickDamage = 30;
     [SerializeField] float timeInvincible = 2f;
 
     [Header("Player VFX References")]
     [SerializeField] VFXTrigger hitVFX;
+    [SerializeField] GameObject landVFX;
 
     [Header("Player SFX References")]
     [SerializeField] AudioSource sfxSource;
-    [SerializeField] AudioClip hurtSFX;
-
+    [SerializeField] AudioRandomizer hitSFX;
+    [SerializeField] AudioRandomizer hurtSFX;
 
     //Player Variable Setup
     private Animator playerAnimator;
     private Rigidbody2D playerRB2D;
-    private SpriteRenderer playerSprite;
     private float currentHealth, invincibilityTimer;
 
     //Player Movement private values
@@ -55,17 +56,19 @@ public class PlayerController : MonoBehaviour
 
     private CinemachineFramingTransposer followTransposer;
 
+    public bool IsDead { get => isDead; }
+    public bool IsInvincible { get => isInvincible; }
     public bool CanHeal { get => canHeal; }
     public bool IsHoldingObject { get => isHoldingObject; set => isHoldingObject = value; }
     public bool IsFacingRight { get => isFacingRight; }
     public bool IsGrounded { get => isGrounded; }
     public float StartingJumpY { get => startingJumpY; }
 
+
     void Start()
     {
         playerAnimator = GetComponent<Animator>();
         playerRB2D = GetComponent<Rigidbody2D>();
-        playerSprite = GetComponent<SpriteRenderer>();
         followTransposer = playerFollowCam.GetCinemachineComponent(CinemachineCore.Stage.Body) as CinemachineFramingTransposer;
 
         currentHealth = maxHealth;
@@ -96,13 +99,13 @@ public class PlayerController : MonoBehaviour
         {
             playerRB2D.gravityScale = 0f;
             playerRB2D.velocity = Vector2.zero;
+            Instantiate(landVFX, transform.position + Vector3.up * 0.5f, Quaternion.identity);
 
             if (playerRB2D.position.y <= lowestYValueInLevel)
                 playerRB2D.position += Vector2.up * 0.25f;
             else if (playerRB2D.position.y >= highestYValueInLevel)
                 playerRB2D.position += -Vector2.up * 0.25f;
         }
-
         AnimatePlayer();
     }
 
@@ -184,12 +187,18 @@ public class PlayerController : MonoBehaviour
         if (!isGrounded) playerAnimator.SetTrigger("jumpAttack");
         else playerAnimator.SetTrigger("punch");
     }
+
+    public void Punch() { TryToHitEnemy(punchDamage); }
+
     public void OnKick()
     {
         if (isDead || isAnimating) return;
         if (!isGrounded) playerAnimator.SetTrigger("jumpAttack");
         else playerAnimator.SetTrigger("kick");
     }
+
+    public void Kick() { TryToHitEnemy(kickDamage); }
+    public void JumpKick() { TryToHitEnemy(jumpKickDamage); }
 
     public void ChangeHealth(int amount)
     {
@@ -202,8 +211,8 @@ public class PlayerController : MonoBehaviour
             isInvincible = true;
             invincibilityTimer = timeInvincible;
 
-            playerAnimator.SetTrigger("hit");
-            sfxSource.PlayOneShot(hurtSFX);
+            playerAnimator.SetTrigger("hurt");
+            hurtSFX.PlayClip();
 
             if (isHoldingObject)
             {
@@ -269,8 +278,8 @@ public class PlayerController : MonoBehaviour
         if (currentInputVector2.x > 0f) isFacingRight = true;
         else if (currentInputVector2.x < 0f) isFacingRight = false;
 
-        if (isFacingRight && playerSprite.flipX) { playerSprite.flipX = false; }
-        else if (!isFacingRight && !playerSprite.flipX) { playerSprite.flipX = true; }
+        if (isFacingRight && transform.localScale.x < 0) { transform.localScale = new Vector3(1f, 1f, 1f); }
+        else if (!isFacingRight && transform.localScale.x > 0) { transform.localScale = new Vector3(-1f, 1f, 1f); }
 
         playerAnimator.SetFloat("movementInput", currentInputVector2.magnitude);
     }
@@ -297,5 +306,36 @@ public class PlayerController : MonoBehaviour
                 GameSessionManager.instance.EnableButton(this.gameObject);
             }
         }
+    }
+
+    private void TryToHitEnemy(int damage)
+    {
+        RaycastHit2D hit = CastForHit();
+
+        if (hit.collider.TryGetComponent<EnemyController>(out EnemyController enemy))
+        {
+            enemy.DamageWith(damage);
+            hitVFX.Trigger();
+            hitSFX.PlayClip();
+        }
+    }
+
+    private RaycastHit2D CastForHit()
+    {
+        Vector2 hitOrigin = new Vector2(hitVFX.transform.position.x, hitVFX.transform.position.y);
+
+        if (isFacingRight)
+            return Physics2D.Raycast(hitOrigin, Vector2.right, 1f);
+        else
+            return Physics2D.Raycast(hitOrigin, Vector2.left, 1f);
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(hitVFX.transform.position, hitVFX.transform.position + Vector3.right * 1f);
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(hitVFX.transform.position, hitVFX.transform.position + Vector3.left * 1f);
     }
 }
