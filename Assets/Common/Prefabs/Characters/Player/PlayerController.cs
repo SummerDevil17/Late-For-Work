@@ -110,8 +110,7 @@ public class PlayerController : MonoBehaviour
             else if (playerRB2D.position.y >= highestYValueInLevel)
                 playerRB2D.position += -Vector2.up * 0.25f;
 
-            ContactPoint2D[] contacts = null;
-            if (feetCollider.GetContacts(contacts) == 0) feetCollider.isTrigger = false;
+            if (!feetCollider.IsTouchingLayers()) feetCollider.isTrigger = false;
         }
         AnimatePlayer();
     }
