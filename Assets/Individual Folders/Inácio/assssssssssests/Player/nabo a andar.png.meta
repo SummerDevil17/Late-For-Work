@@ -144,9 +144,9 @@ TextureImporter:
       name: nabo a andar_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 7
         y: 0
-        width: 32
+        width: 24
         height: 64
       alignment: 7
       pivot: {x: 0.5, y: 0}
@@ -165,9 +165,9 @@ TextureImporter:
       name: nabo a andar_1
       rect:
         serializedVersion: 2
-        x: 32
+        x: 37
         y: 0
-        width: 32
+        width: 24
         height: 64
       alignment: 7
       pivot: {x: 0.5, y: 0}
@@ -186,9 +186,9 @@ TextureImporter:
       name: nabo a andar_2
       rect:
         serializedVersion: 2
-        x: 64
+        x: 69
         y: 0
-        width: 32
+        width: 24
         height: 64
       alignment: 7
       pivot: {x: 0.5, y: 0}
@@ -207,9 +207,9 @@ TextureImporter:
       name: nabo a andar_3
       rect:
         serializedVersion: 2
-        x: 96
+        x: 98
         y: 0
-        width: 32
+        width: 24
         height: 64
       alignment: 7
       pivot: {x: 0.5, y: 0}
