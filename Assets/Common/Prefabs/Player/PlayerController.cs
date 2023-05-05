@@ -25,10 +25,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float kickDamage = 20f;
     [SerializeField] float timeInvincible = 2f;
 
-    [Header("Player Touch Joystick References")]
-    [SerializeField] RectTransform baseTouchJoystick;
-    [SerializeField] RectTransform midTouchJoystick;
-    [SerializeField] RectTransform tipTouchJoystick;
+    [Header("Player VFX References")]
+    [SerializeField] VFXTrigger hitVFX;
+
+    [Header("Player SFX References")]
+    [SerializeField] AudioSource sfxSource;
+    [SerializeField] AudioClip hurtSFX;
+
 
     //Player Variable Setup
     private Animator playerAnimator;
@@ -188,6 +191,8 @@ public class PlayerController : MonoBehaviour
 
     public void ChangeHealth(int amount)
     {
+        if (isDead) return;
+
         if (amount < 0)
         {
             if (isInvincible) return;
@@ -196,6 +201,7 @@ public class PlayerController : MonoBehaviour
             invincibilityTimer = timeInvincible;
 
             playerAnimator.SetTrigger("hit");
+            sfxSource.PlayOneShot(hurtSFX);
 
             if (isHoldingObject)
             {
@@ -252,6 +258,8 @@ public class PlayerController : MonoBehaviour
 
     private void AnimatePlayer()
     {
+        if (isAnimating) return;
+
         if (isGrounded) playerAnimator.SetBool("isGrounded", true);
 
         if (!isHoldingObject) playerAnimator.SetBool("isHolding", false);
