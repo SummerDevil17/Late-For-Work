@@ -65,6 +65,7 @@ public class GameSessionManager : MonoBehaviour
             return string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 
+    public void WinGame() { winScreen.TriggerMenu(); }
     public void LoseGame() { lossScreen.TriggerMenu(); }
 
     public void EnableButton(GameObject caller)
