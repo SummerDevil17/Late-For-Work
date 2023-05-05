@@ -9,7 +9,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] CinemachineVirtualCamera playerFollowCam;
 
     [Header("Player Movement Values")]
-    [SerializeField] float movementSpeed = 5f;
+    [SerializeField] float movementSpeed = 6f;
+    [SerializeField] float carryingSpeed = 4.5f;
     [SerializeField] float jumpForce = 250f;
     [SerializeField] float timeToKeepJumping = 1f;
     [SerializeField] float gravityScale = 15f;
@@ -264,7 +265,6 @@ public class PlayerController : MonoBehaviour
     public void TriggerAnimating() { isAnimating = true; }
     public void CancelAnimating() { isAnimating = false; }
     public void StopHoldingObject() { isHoldingObject = false; }
-
     #endregion
 
     private void AnimatePlayer()
@@ -325,17 +325,17 @@ public class PlayerController : MonoBehaviour
         Vector2 hitOrigin = new Vector2(hitVFX.transform.position.x, hitVFX.transform.position.y);
 
         if (isFacingRight)
-            return Physics2D.Raycast(hitOrigin, Vector2.right, 1f);
+            return Physics2D.Raycast(hitOrigin, Vector2.right, 0.7f,);
         else
-            return Physics2D.Raycast(hitOrigin, Vector2.left, 1f);
+            return Physics2D.Raycast(hitOrigin, Vector2.left, 0.7f,);
     }
 
     void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawLine(hitVFX.transform.position, hitVFX.transform.position + Vector3.right * 1f);
+        Gizmos.DrawLine(hitVFX.transform.position, hitVFX.transform.position + Vector3.right * 0.7f);
 
         Gizmos.color = Color.yellow;
-        Gizmos.DrawLine(hitVFX.transform.position, hitVFX.transform.position + Vector3.left * 1f);
+        Gizmos.DrawLine(hitVFX.transform.position, hitVFX.transform.position + Vector3.left * 0.7f);
     }
 }
