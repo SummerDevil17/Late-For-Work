@@ -5,6 +5,8 @@ public class EnemyController : MonoBehaviour
     [Header("Enemy Movement Values")]
     [SerializeField] float movementSpeed = 8f;
 
+    [SerializeField] float stopDistance = 1.5f;
+
     [Header("Enemy Feet Reference")]
     [SerializeField] GameObject feetCollider;
 
@@ -32,6 +34,8 @@ public class EnemyController : MonoBehaviour
     private bool isDead = false;
     private bool isAnimating = false, isFacingRight = false;
 
+    public bool IsDead { get => isDead; }
+
     void Start()
     {
         enemyAnimator = GetComponent<Animator>();
@@ -53,9 +57,21 @@ public class EnemyController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (isDead) return;
+        if (isDead || isAnimating) return;
 
+        Vector2 targetDistance = targetTransform.position - transform.position;
 
+        float hForce = targetDistance.x / Mathf.Abs(targetDistance.x);
+        float yForce = targetDistance.x / Mathf.Abs(targetDistance.x);
+
+        if (Mathf.Abs(targetDistance.x) < stopDistance) { hForce = 0; }
+        if (Mathf.Abs(targetDistance.y) < stopDistance) { yForce = 0; }
+
+        enemyRB2D.velocity = new Vector2(hForce * movementSpeed, yForce * movementSpeed);
+
+        PlayerController player = targetTransform.GetComponent<PlayerController>();
+        enemyRB2D.position = new Vector2(enemyRB2D.position.x, Mathf.Clamp(enemyRB2D.position.y,
+        player.lowestYValueInLevel, player.highestYValueInLevel));
     }
 
     public void DamageWith(int amount)
@@ -83,8 +99,10 @@ public class EnemyController : MonoBehaviour
     {
         if (isAnimating) return;
 
-        if (isFacingRight && transform.localScale.x > 0) { transform.localScale = new Vector3(1f, 1f, 1f); }
-        else if (!isFacingRight && transform.localScale.x < 0) { transform.localScale = new Vector3(-1f, 1f, 1f); }
+        if (isFacingRight && transform.localScale.x > 0) { transform.localScale = new Vector3(-1f, 1f, 1f); }
+        else if (!isFacingRight && transform.localScale.x < 0) { transform.localScale = new Vector3(1f, 1f, 1f); }
+
+        enemyAnimator.SetFloat("movementInput", enemyRB2D.velocity.magnitude);
     }
 
     private void TryToHitPlayer(int damage)

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5542395744447775764}
   - component: {fileID: 6860229150287928884}
   - component: {fileID: 3791949768118175322}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: barrel-completo
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -76,8 +76,9 @@ public class LossMenu : MonoBehaviour, ICanvasDisplayer
     {
         var levelUnlocker = FindObjectOfType<LevelUnlockManager>();
 
-        if (levelUnlocker) levelUnlocker.LoadLevel();
-        else SceneManager.LoadScene(1);
+        //if (levelUnlocker) levelUnlocker.LoadLevel();
+        /*else*/
+        SceneManager.LoadScene(2);
     }
 
     public void Quit()

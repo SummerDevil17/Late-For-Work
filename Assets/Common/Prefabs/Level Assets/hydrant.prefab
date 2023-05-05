@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2915059129451949103}
   - component: {fileID: 1295853444880848792}
   - component: {fileID: 3251237577022683521}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: hydrant
   m_TagString: Untagged
   m_Icon: {fileID: 0}

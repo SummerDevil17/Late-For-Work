@@ -14,8 +14,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float jumpForce = 250f;
     [SerializeField] float timeToKeepJumping = 1f;
     [SerializeField] float gravityScale = 15f;
-    [SerializeField] float highestYValueInLevel = 1.5f;
-    [SerializeField] float lowestYValueInLevel = -7.5f;
+    public float highestYValueInLevel = 1.5f;
+    public float lowestYValueInLevel = -7.5f;
 
     [Header("Player Feet Reference")]
     [SerializeField] BoxCollider2D feetCollider;
@@ -29,6 +29,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] int kickDamage = 20;
     [SerializeField] int jumpKickDamage = 30;
     [SerializeField] float timeInvincible = 2f;
+
+    [Header("Player Attack Trigger Limits")]
+    [SerializeField] float triggerMaxLimit = 1f;
+    [SerializeField] float triggerMinLimit = 1f;
 
     [Header("Player VFX References")]
     [SerializeField] VFXTrigger hitVFX;
@@ -103,14 +107,14 @@ public class PlayerController : MonoBehaviour
         {
             playerRB2D.gravityScale = 0f;
             playerRB2D.velocity = Vector2.zero;
-            Instantiate(landVFX, transform.position + Vector3.up * 0.5f, Quaternion.identity);
+            //Instantiate(landVFX, transform.position + Vector3.up * 0.5f, Quaternion.identity);
 
             if (playerRB2D.position.y <= lowestYValueInLevel)
                 playerRB2D.position += Vector2.up * 0.25f;
             else if (playerRB2D.position.y >= highestYValueInLevel)
                 playerRB2D.position += -Vector2.up * 0.25f;
 
-            if (!feetCollider.IsTouchingLayers()) feetCollider.isTrigger = false;
+            feetCollider.isTrigger = false;
         }
         AnimatePlayer();
     }
@@ -194,6 +198,16 @@ public class PlayerController : MonoBehaviour
     public void OnPunch()
     {
         if (isDead || isAnimating) return;
+
+        if (isHoldingObject)
+        {
+            playerAnimator.SetTrigger("throw");
+            objectToPickUp.GetComponent<WeaponPickUp>().Throw();
+
+            GameSessionManager.instance.DisableButton(this.gameObject);
+            return;
+        }
+
         if (!isGrounded) playerAnimator.SetTrigger("jumpAttack");
         else playerAnimator.SetTrigger("punch");
     }
@@ -203,6 +217,16 @@ public class PlayerController : MonoBehaviour
     public void OnKick()
     {
         if (isDead || isAnimating) return;
+
+        if (isHoldingObject)
+        {
+            playerAnimator.SetTrigger("throw");
+            objectToPickUp.GetComponent<WeaponPickUp>().Throw();
+
+            GameSessionManager.instance.DisableButton(this.gameObject);
+            return;
+        }
+
         if (!isGrounded) playerAnimator.SetTrigger("jumpAttack");
         else playerAnimator.SetTrigger("kick");
     }
@@ -323,10 +347,22 @@ public class PlayerController : MonoBehaviour
 
         if (hit && hit.collider.TryGetComponent<EnemyController>(out EnemyController enemy))
         {
+            if (enemy.IsDead) return;
+
             Debug.Log("Player attacked -> " + hit.collider.name);
-            enemy.DamageWith(damage);
-            hitVFX.Trigger();
-            hitSFX.PlayClip();
+            if (enemy.transform.position.y <= transform.position.y + triggerMaxLimit &&
+               enemy.transform.position.y >= transform.position.y - triggerMinLimit)
+            {
+                enemy.DamageWith(damage);
+                hitVFX.Trigger();
+                hitSFX.PlayClip();
+            }
+            else if (!isGrounded)
+            {
+                enemy.DamageWith(damage);
+                hitVFX.Trigger();
+                hitSFX.PlayClip();
+            }
         }
     }
 
@@ -340,20 +376,21 @@ public class PlayerController : MonoBehaviour
             return Physics2D.Raycast(hitOrigin, Vector2.left, 0.5f, 1 << 3);
     }
 
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.green;
-        Gizmos.DrawLine(hitVFX.transform.position, hitVFX.transform.position + Vector3.right * 0.5f);
-
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawLine(hitVFX.transform.position, hitVFX.transform.position + Vector3.left * 0.5f);
-    }
-
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(new Vector3(transform.position.x, highestYValueInLevel, transform.position.z), 0.5f);
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(new Vector3(transform.position.x, lowestYValueInLevel, transform.position.z), 0.5f);
+
+        Gizmos.color = Color.green;
+        //Max line
+        Gizmos.DrawLine(new Vector3(transform.position.x + 0.8f, transform.position.y + triggerMaxLimit, 0f),
+                        new Vector3(transform.position.x - 0.8f, transform.position.y + triggerMaxLimit, 0f));
+
+        Gizmos.color = Color.cyan;
+        //Min line
+        Gizmos.DrawLine(new Vector3(transform.position.x + 0.8f, transform.position.y - triggerMinLimit, 0f),
+                        new Vector3(transform.position.x - 0.8f, transform.position.y - triggerMinLimit, 0f));
     }
 }
