@@ -28,7 +28,7 @@ public class EnemyController : MonoBehaviour
 
     //Enemy States Bool Checks
     private bool isDead = false;
-    private bool isFacingRight = false;
+    private bool isAnimating = false, isFacingRight = false;
 
     void Start()
     {
@@ -49,12 +49,14 @@ public class EnemyController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (isDead) return;
+
 
     }
 
     public void DamageWith(int amount)
     {
-        if (isDead) return;
+        if (isDead || isAnimating) return;
 
         enemyAnimator.SetTrigger("hit");
         hurtSFX.PlayClip();
@@ -69,9 +71,15 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    public void TriggerAnimating() { isAnimating = true; }
+    public void CancelAnimating() { isAnimating = false; }
+
     private void AnimateEnemy()
     {
-        if (isFacingRight) ;
+        if (isAnimating) return;
+
+        if (isFacingRight && transform.localScale.x > 0) { transform.localScale = new Vector3(1f, 1f, 1f); }
+        else if (!isFacingRight && transform.localScale.x < 0) { transform.localScale = new Vector3(-1f, 1f, 1f); }
     }
 
     private void TryToHitPlayer(int damage)
