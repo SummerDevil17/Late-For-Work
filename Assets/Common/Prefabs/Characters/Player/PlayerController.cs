@@ -124,7 +124,10 @@ public class PlayerController : MonoBehaviour
         else if (!isGrounded) forceInY = 0f;
 
         Vector2 position = playerRB2D.position;
-        position += new Vector2(currentInputVector2.x, forceInY) * movementSpeed * Time.deltaTime;
+        if (!isHoldingObject)
+            position += new Vector2(currentInputVector2.x, forceInY) * movementSpeed * Time.deltaTime;
+        else
+            position += new Vector2(currentInputVector2.x, forceInY) * carryingSpeed * Time.deltaTime;
 
         if (position.y <= lowestYValueInLevel || position.y >= highestYValueInLevel)
             position.y = playerRB2D.position.y;
@@ -325,17 +328,17 @@ public class PlayerController : MonoBehaviour
         Vector2 hitOrigin = new Vector2(hitVFX.transform.position.x, hitVFX.transform.position.y);
 
         if (isFacingRight)
-            return Physics2D.Raycast(hitOrigin, Vector2.right, 0.7f,);
+            return Physics2D.Raycast(hitOrigin, Vector2.right, 0.5f, 1 << 3);
         else
-            return Physics2D.Raycast(hitOrigin, Vector2.left, 0.7f,);
+            return Physics2D.Raycast(hitOrigin, Vector2.left, 0.5f, 1 << 3);
     }
 
     void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawLine(hitVFX.transform.position, hitVFX.transform.position + Vector3.right * 0.7f);
+        Gizmos.DrawLine(hitVFX.transform.position, hitVFX.transform.position + Vector3.right * 0.5f);
 
         Gizmos.color = Color.yellow;
-        Gizmos.DrawLine(hitVFX.transform.position, hitVFX.transform.position + Vector3.left * 0.7f);
+        Gizmos.DrawLine(hitVFX.transform.position, hitVFX.transform.position + Vector3.left * 0.5f);
     }
 }
