@@ -24,7 +24,6 @@ public class GameSessionManager : MonoBehaviour
     private float timeElapsed = 0f;
     private bool hasUnlockedEveryLevel = false;
 
-
     public int ScorePoints { get => scorePoints; }
     public float TimeElapsed { get => timeElapsed; }
 

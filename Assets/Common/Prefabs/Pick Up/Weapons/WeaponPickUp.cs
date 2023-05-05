@@ -34,7 +34,7 @@ public class WeaponPickUp : MonoBehaviour, IPickUp
     void Update()
     {
         if (weaponHealth <= 0) Destroy(this.gameObject);
-        if (hasBeenPickedUp) { transform.position = transform.parent.position; weaponSprite.sortingOrder++; }
+        if (hasBeenPickedUp) { transform.position = transform.parent.position; }
 
         if (!player || player.IsHoldingObject || hasBeenPickedUp) return;
 
@@ -116,6 +116,7 @@ public class WeaponPickUp : MonoBehaviour, IPickUp
     public void PickUp(Transform player)
     {
         hasBeenPickedUp = true;
+        weaponSprite.sortingOrder++;
         GameSessionManager.instance.DisableButton(this.gameObject);
 
         transform.parent = player.GetComponentsInChildren<Transform>()[1];
