@@ -5,6 +5,9 @@ public class EnemyController : MonoBehaviour
     [Header("Enemy Movement Values")]
     [SerializeField] float movementSpeed = 8f;
 
+    [Header("Enemy Feet Reference")]
+    [SerializeField] GameObject feetCollider;
+
     [Header("Enemy Stats Values")]
     [SerializeField] float maxHealth = 100f;
     [SerializeField] int scoreValue = 165;
@@ -12,7 +15,6 @@ public class EnemyController : MonoBehaviour
 
     [Header("Enemy VFX References")]
     [SerializeField] VFXTrigger hitVFX;
-    [SerializeField] GameObject landVFX;
 
     [Header("Enemy SFX References")]
     [SerializeField] AudioSource sfxSource;
@@ -42,6 +44,8 @@ public class EnemyController : MonoBehaviour
 
     void Update()
     {
+        if (isDead) Destroy(this.gameObject, 4f);
+
         isFacingRight = transform.position.x < targetTransform.position.x ? true : false;
 
         AnimateEnemy();
@@ -67,6 +71,7 @@ public class EnemyController : MonoBehaviour
         {
             isDead = true;
             enemyAnimator.SetTrigger("die");
+            feetCollider.SetActive(false);
             GameSessionManager.instance.AddToScore(scoreValue);
         }
     }

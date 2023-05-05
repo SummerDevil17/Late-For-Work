@@ -17,6 +17,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float highestYValueInLevel = 1.5f;
     [SerializeField] float lowestYValueInLevel = -7.5f;
 
+    [Header("Player Feet Reference")]
+    [SerializeField] BoxCollider2D feetCollider;
+
     [Header("Player Animation Speed Values")]
     [SerializeField] float pickUpAnimationHold = 0.35f;
 
@@ -106,6 +109,9 @@ public class PlayerController : MonoBehaviour
                 playerRB2D.position += Vector2.up * 0.25f;
             else if (playerRB2D.position.y >= highestYValueInLevel)
                 playerRB2D.position += -Vector2.up * 0.25f;
+
+            ContactPoint2D[] contacts = null;
+            if (feetCollider.GetContacts(contacts) == 0) feetCollider.isTrigger = false;
         }
         AnimatePlayer();
     }
@@ -161,6 +167,7 @@ public class PlayerController : MonoBehaviour
 
         isJumping = true;
         isGrounded = false;
+        feetCollider.isTrigger = true;
         jumpingTimer = 0f;
 
         playerAnimator.SetTrigger("jump");
@@ -314,10 +321,10 @@ public class PlayerController : MonoBehaviour
     private void TryToHitEnemy(int damage)
     {
         RaycastHit2D hit = CastForHit();
-        Debug.Log("Player attacked -> " + hit.collider.name);
 
-        if (hit.collider.TryGetComponent<EnemyController>(out EnemyController enemy))
+        if (hit && hit.collider.TryGetComponent<EnemyController>(out EnemyController enemy))
         {
+            Debug.Log("Player attacked -> " + hit.collider.name);
             enemy.DamageWith(damage);
             hitVFX.Trigger();
             hitSFX.PlayClip();
