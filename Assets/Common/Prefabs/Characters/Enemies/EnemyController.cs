@@ -69,7 +69,10 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    private void AnimateEnemy() { }
+    private void AnimateEnemy()
+    {
+        if (isFacingRight) ;
+    }
 
     private void TryToHitPlayer(int damage)
     {

@@ -4,5 +4,9 @@ public class VFXTrigger : MonoBehaviour
 {
     [SerializeField] GameObject vfxToInstantiate;
 
-    public void Trigger() { Instantiate(vfxToInstantiate, transform.position, Quaternion.identity); }
+    public void Trigger()
+    {
+        GameObject newInstantiate = Instantiate(vfxToInstantiate, transform.position, Quaternion.identity);
+        newInstantiate.transform.parent = this.transform;
+    }
 }
