@@ -7,6 +7,7 @@ public class HealthPickUp : MonoBehaviour, IPickUp
     [Header("Trigger Limits")]
     [SerializeField] float triggerMaxLimit = 1f;
     [SerializeField] float triggerMinLimit = 1f;
+    [SerializeField] GameObject healVFX;
 
     private PlayerController player;
 
@@ -14,7 +15,7 @@ public class HealthPickUp : MonoBehaviour, IPickUp
 
     void Update()
     {
-        if (!player) return;
+        if (!player || player.IsHoldingObject || !player.CanHeal) return;
 
         if (IsWithingLimits())
         {

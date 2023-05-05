@@ -33,7 +33,8 @@ public class WeaponPickUp : MonoBehaviour, IPickUp
 
     void Update()
     {
-        if (!player) return;
+        if (weaponHealth <= 0) Destroy(this.gameObject);
+        if (!player || player.IsHoldingObject || hasBeenPickedUp) return;
 
         if (IsWithingLimits())
         {
@@ -52,8 +53,6 @@ public class WeaponPickUp : MonoBehaviour, IPickUp
         if (hasBeenPickedUp)
         {
             transform.position = transform.parent.position;
-            if (player.IsFacingRight && weaponSprite.flipX) weaponSprite.flipX = false;
-            else if (!player.IsFacingRight && !weaponSprite.flipX) weaponSprite.flipX = true;
         }
     }
 
@@ -73,7 +72,17 @@ public class WeaponPickUp : MonoBehaviour, IPickUp
 
     void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.collider.TryGetComponent<PlayerController>(out PlayerController player)) { player.ChangeHealth(-weaponDamage); }
+        Debug.Log(other.collider.name);
+        if (other.collider.TryGetComponent<PlayerController>(out PlayerController player))
+        {
+            player.ChangeHealth(-weaponDamage);
+            weaponHealth--;
+        }
+        else if (other.collider.TryGetComponent<EnemyController>(out EnemyController enemy))
+        {
+            enemy.DamageWith(weaponDamage);
+            weaponHealth--;
+        }
         weaponAnimator.SetTrigger("hit");
     }
 
